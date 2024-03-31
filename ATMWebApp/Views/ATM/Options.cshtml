@@ -1,0 +1,14 @@
+﻿@model User
+
+<h2>Welcome, @Model.Name!</h2>
+
+<ul>
+    <li><a asp-action="CheckCashAvailability">Check Cash Availability</a></li>
+    <li><a asp-action="TransactionHistory">Show Transaction History</a></li>
+    <li><a asp-controller="Cash" asp-action="Withdraw">Withdraw Cash</a></li>
+    <li><a asp-controller="FastCash" asp-action="FastWithdraw">FastWithdraw Cash</a></li>
+</ul>
+
+<div>
+    <a asp-action="Logout" class="btn btn-primary" role="button">Logout</a>
+</div>

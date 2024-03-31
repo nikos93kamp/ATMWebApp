@@ -1,0 +1,16 @@
+﻿@model Transaction
+
+<form asp-action="Withdraw">
+    <div class="form-group col-md-2">
+        <label for="amount">Amount:</label>
+        <input type="number" class="form-control" id="amount" name="Amount" min="1" max="1000" required>
+        <span asp-validation-for="Amount" class="text-danger"></span>
+    </div>
+    <br />
+    <div class="form-row">
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary">Withdraw</button>
+            <a asp-controller="ATM" asp-action="Options" class="btn btn-primary" role="button">Back to Options</a>
+        </div>
+    </div>
+</form>

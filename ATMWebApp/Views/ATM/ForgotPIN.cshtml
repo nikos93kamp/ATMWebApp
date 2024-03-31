@@ -1,0 +1,11 @@
+﻿@model User
+@using ATMWebApp.Components
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using Microsoft.AspNetCore.Http
+
+@{
+    List<User> cardNumbers = ViewBag.CardNumbers ?? new List<User>();
+}
+
+@await Component.InvokeAsync("GridView", new { cardNumbers })
+

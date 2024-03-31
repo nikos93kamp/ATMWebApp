@@ -1,0 +1,21 @@
+﻿@model decimal
+
+<p><strong>"Fast" Cash Withdrawal</strong></p>
+
+<form asp-controller="FastCash" asp-action="FastWithdraw" method="post">
+    <div class="form-group col-md-2">
+        <label for="amount">Select Amount:</label>
+        <select id="amount" name="Amount">
+            <option value="20">$20</option>
+            <option value="50">$50</option>
+            <option value="100">$100</option>
+        </select>
+    </div>
+    <br />
+    <div class="form-row">
+        <div class="col-md-3">
+            <button id="withdraw-button" type="submit">Fast Withdraw</button>
+            <button asp-controller="ATM" asp-action="Options">Back to Options</button>
+        </div>
+    </div>
+</form>

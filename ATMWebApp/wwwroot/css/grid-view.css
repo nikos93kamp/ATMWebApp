@@ -1,0 +1,83 @@
+﻿
+.grid-view {
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f5f5f5;
+}
+
+.search-container {
+    margin-top: 10px;
+}
+
+#searchInput {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#searchButton {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.grid-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .grid-table th,
+    .grid-table td {
+        padding: 8px;
+        border: 1px solid #ccc;
+    }
+
+.grid-table tr:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+}
+
+    .grid-table tr.selected {
+        background-color: #ffc107;
+    }
+
+
+.pagination {
+    margin-top: 10px;
+}
+
+    .pagination .page-item {
+        margin: 0 5px;
+    }
+
+        .pagination .page-item.disabled .page-link {
+            color: #999;
+            pointer-events: none;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+        }
+
+
+/* CSS for styling sorting arrows */
+th {
+    cursor: pointer;
+    position: relative;
+}
+
+    th.asc::after {
+        content: ' ▲';
+        color: green;
+    }
+
+    th.desc::after {
+        content: ' ▼';
+        color: red;
+    }
+

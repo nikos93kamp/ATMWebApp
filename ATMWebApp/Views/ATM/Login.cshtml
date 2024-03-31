@@ -1,0 +1,41 @@
+﻿@model User
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100 p-t-50 p-b-90">
+            <form asp-controller="ATM" asp-action="Login" id="loginForm" class="login100-form validate-form flex-sb flex-w" method="post">
+                <span class="login100-form-title p-b-51">Welcome to the ATM</span>
+
+                <div class="wrap-input100 validate-input m-b-16" data-validate="CardNumber is required">
+                    <input class="input100" type="text" id="cardNumber" name="CardNumber" placeholder="CardNumber" />
+                    <span class="focus-input100"></span>
+                    <span id="validationMessages1" asp-validation-for="CardNumber" class="text-danger"></span>
+                </div>
+                <div class="wrap-input100 validate-input m-b-16" data-validate="PIN is required">
+                    <input class="input100" type="password" id="pin" name="PIN" placeholder="PIN" asp-for="PIN" data-val-required="" data-val="false"/>
+                    <span class="focus-input100"></span>
+                    <span id="validationMessages2" asp-validation-for="PIN" class="text-danger"></span>
+                </div>
+
+                <div class="flex-sb-m w-full p-t-3 p-b-24">
+                    <div>
+                        <a href="/ATM/ForgotPIN" class="txt1">
+                            Forgot PIN?
+                        </a>
+                    </div>
+                </div>
+                <div class="container-login100-form-btn m-t-17">
+                    <button class="login100-form-btn">
+                        Login
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
