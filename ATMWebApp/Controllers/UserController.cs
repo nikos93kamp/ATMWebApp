@@ -35,7 +35,7 @@ namespace ATMWebApp.Controllers
             }
 
             var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.ID == id);
             if (user == null)
             {
                 return NotFound();
@@ -54,9 +54,9 @@ namespace ATMWebApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,CardNumber,PIN,Balance,Transactions")] User user)
+        public async Task<IActionResult> Create([Bind("ID,Name,CardNumber,PIN,Balance,Transactions")] User user)
         {
-            ModelState["Transactions"]!.ValidationState = ModelValidationState.Valid;
+            //ModelState["Transactions"]!.ValidationState = ModelValidationState.Valid;
 
             if (ModelState.IsValid)
             {
@@ -77,34 +77,38 @@ namespace ATMWebApp.Controllers
                     return View(user);
                 }
 
-                if (!Regex.IsMatch(user.PIN, @"^[0-9]+$"))
+                if (user.PIN != null)
                 {
-                    ModelState.AddModelError("PIN", "PIN must be an Integer");
-                    return View(user);
-                }
+                    if (!Regex.IsMatch(user.PIN, @"^[0-9]+$"))
+                    {
+                        ModelState.AddModelError("PIN", "PIN must be an Integer");
+                        return View(user);
+                    }
 
-                if (user.CardNumber.Length != 16 && user.PIN.Length != 4)
-                {
-                    ModelState.AddModelError("CardNumber", "Invalid Card Number!");
-                    ModelState.AddModelError("PIN", "Invalid PIN!");
-                    return View(user);
-                }
+                    if (user?.CardNumber?.Length != 16 && user?.PIN?.Length != 4)
+                    {
+                        ModelState.AddModelError("CardNumber", "Invalid Card Number!");
+                        ModelState.AddModelError("PIN", "Invalid PIN!");
+                        return View(user);
+                    }
 
-                if (user.CardNumber.Length != 16)
-                {
-                    ModelState.AddModelError("CardNumber", "Card Number must be a 16-digit number.");
-                    return View(user);
-                }
+                    if (user?.CardNumber?.Length != 16)
+                    {
+                        ModelState.AddModelError("CardNumber", "Card Number must be a 16-digit number.");
+                        return View(user);
+                    }
 
-                if (user.PIN.Length != 4)
-                {
-                    ModelState.AddModelError("PIN", "PIN must be a 4-digit number");
-                    return View(user);
-                }
+                    if (user.PIN.Length != 4)
+                    {
+                        ModelState.AddModelError("PIN", "PIN must be a 4-digit number");
+                        return View(user);
+                    }
 
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    _context.Add(user);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }                
+  
             }
             //var errors = ModelState.Values.SelectMany(v => v.Errors);
 
@@ -133,51 +137,54 @@ namespace ATMWebApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,CardNumber,PIN,Balance,Transactions")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,CardNumber,PIN,Balance,Transactions")] User user)
         {
-            if (id != user.Id)
+            if (id != user.ID)
             {
                 return NotFound();
             }
 
-            ModelState["Transactions"]!.ValidationState = ModelValidationState.Valid;
+            //ModelState["Transactions"]!.ValidationState = ModelValidationState.Valid;
 
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    if (!Regex.IsMatch(user.PIN, @"^[0-9]+$"))
+                    if (user.PIN != null)
                     {
-                        ModelState.AddModelError("PIN", "PIN must be an Integer");
-                        return View(user);
-                    }
+                        if (!Regex.IsMatch(user.PIN, @"^[0-9]+$"))
+                        {
+                            ModelState.AddModelError("PIN", "PIN must be an Integer");
+                            return View(user);
+                        }
 
-                    if (user.CardNumber.Length != 16 && user.PIN.Length != 4)
-                    {
-                        ModelState.AddModelError("CardNumber", "Invalid Card Number!");
-                        ModelState.AddModelError("PIN", "Invalid PIN!");
-                        return View(user);
-                    }
+                        if (user?.CardNumber?.Length != 16 && user?.PIN.Length != 4)
+                        {
+                            ModelState.AddModelError("CardNumber", "Invalid Card Number!");
+                            ModelState.AddModelError("PIN", "Invalid PIN!");
+                            return View(user);
+                        }
 
-                    if (user.CardNumber.Length != 16)
-                    {
-                        ModelState.AddModelError("CardNumber", "Card Number must be a 16-digit number.");
-                        return View(user);
-                    }
+                        if (user?.CardNumber?.Length != 16)
+                        {
+                            ModelState.AddModelError("CardNumber", "Card Number must be a 16-digit number.");
+                            return View(user);
+                        }
 
-                    if (user.PIN.Length != 4)
-                    {
-                        ModelState.AddModelError("PIN", "PIN must be a 4-digit number");
-                        return View(user);
-                    }
+                        if (user.PIN.Length != 4)
+                        {
+                            ModelState.AddModelError("PIN", "PIN must be a 4-digit number");
+                            return View(user);
+                        }
 
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
+                        _context.Update(user);
+                        await _context.SaveChangesAsync();
+                    }                  
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserExists(user.Id))
+                    if (!UserExists(user.ID))
                     {
                         return NotFound();
                     }
@@ -200,7 +207,7 @@ namespace ATMWebApp.Controllers
             }
 
             var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.ID == id);
             if (user == null)
             {
                 return NotFound();
@@ -230,7 +237,7 @@ namespace ATMWebApp.Controllers
 
         private bool UserExists(int id)
         {
-            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Users?.Any(e => e.ID == id)).GetValueOrDefault();
         }
     }
 }

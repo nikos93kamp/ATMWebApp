@@ -32,7 +32,7 @@ namespace ATMWebApp.Controllers
                 return RedirectToAction("Login", "ATM");
             }
 
-            var d_user = _context.Users.Include(u => u.Transactions).FirstOrDefault(u => u.Id == userId);
+            var d_user = _context.Users.Include(u => u.Transactions).FirstOrDefault(u => u.ID == userId);
 
             if (d_user == null)
             {
@@ -40,7 +40,7 @@ namespace ATMWebApp.Controllers
                 return RedirectToAction("Login", "ATM");
             }
 
-            var cashAvailability = _context.Users.FirstOrDefault(u => u.Id == userId)?.Balance ?? 0;
+            var cashAvailability = _context.Users.FirstOrDefault(u => u.ID == userId)?.Balance ?? 0;
 
             if (cashAvailability == 0 || amount > d_user.Balance)
             {
@@ -49,20 +49,25 @@ namespace ATMWebApp.Controllers
                 return View(amount);
             }
 
-            if (d_user.Transactions.Count(t => t.Date.Date == DateTime.Today) >= 10)
+            if (d_user?.Transactions?.Count(t => t.Date.Date == DateTime.Today) >= 10)
             {
                 // Transaction limit exceeded, show error message
                 ModelState.AddModelError("Amount", "Transaction limit exceeded");
                 return View(amount);
             }
 
-            // Update user balance and create transaction
-            d_user.Balance -= amount;
-            d_user.Transactions.Add(new Transaction { UserId = d_user.Id, Date = DateTime.Now, Amount = amount });
+            if (d_user != null)
+            {
+                // Update user balance and create transaction
+                d_user.Balance -= amount;
+                d_user?.Transactions?.Add(new Transaction { UserId = d_user.ID, Date = DateTime.Now, Amount = amount });
 
-            _context.SaveChanges();
+                _context.SaveChanges();
 
-            return RedirectToAction("Options","ATM");
+                return RedirectToAction("Options", "ATM");
+            }
+
+            throw new Exception("Error");
         }
 
         public virtual IActionResult FastWithdraw()
@@ -81,7 +86,7 @@ namespace ATMWebApp.Controllers
                 return RedirectToAction("Login", "ATM");
             }
 
-            var d_user = _context.Users.Include(u => u.Transactions).FirstOrDefault(u => u.Id == userId);
+            var d_user = _context.Users.Include(u => u.Transactions).FirstOrDefault(u => u.ID == userId);
 
             if (d_user == null)
             {
@@ -89,7 +94,7 @@ namespace ATMWebApp.Controllers
                 return RedirectToAction("Login", "ATM");
             }
 
-            var cashAvailability = _context.Users.FirstOrDefault(u => u.Id == userId)?.Balance ?? 0;
+            var cashAvailability = _context.Users.FirstOrDefault(u => u.ID == userId)?.Balance ?? 0;
 
             if (cashAvailability == 0 || amount > d_user.Balance)
             {
@@ -98,20 +103,25 @@ namespace ATMWebApp.Controllers
                 return View(amount);
             }
 
-            if (d_user.Transactions.Count(t => t.Date.Date == DateTime.Today) >= 10)
+            if (d_user?.Transactions?.Count(t => t.Date.Date == DateTime.Today) >= 10)
             {
                 // Transaction limit exceeded, show error message
                 ModelState.AddModelError("Amount", "Transaction limit exceeded");
                 return View(amount);
             }
 
-            // Update user balance and create transaction
-            d_user.Balance -= amount;
-            d_user.Transactions.Add(new Transaction { UserId = d_user.Id, Date = DateTime.Now, Amount = amount });
+            if (d_user != null)
+            {
+                // Update user balance and create transaction
+                d_user.Balance -= amount;
+                d_user?.Transactions?.Add(new Transaction { UserId = d_user.ID, Date = DateTime.Now, Amount = amount });
 
-            _context.SaveChanges();
+                _context.SaveChanges();
 
-            return RedirectToAction("Options", "ATM");
+                return RedirectToAction("Options", "ATM");
+            }
+
+            throw new Exception("Error");
         }
     }
 }

@@ -98,9 +98,7 @@ div {
     display: -ms-flexbox;
     display: flex;
     -webkit-flex-wrap: wrap;
-    -moz-flex-wrap: wrap;
     -ms-flex-wrap: wrap;
-    -o-flex-wrap: wrap;
     flex-wrap: wrap;
 }
 
@@ -180,7 +178,6 @@ input {
     display: -ms-flexbox;
     display: flex;
     justify-content: space-between;
-    -ms-align-items: center;
     align-items: center;
 }
 

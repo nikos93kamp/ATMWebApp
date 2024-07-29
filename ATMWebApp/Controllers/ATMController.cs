@@ -3,6 +3,7 @@ using ATMWebApp.Data;
 using ATMWebApp.Models;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.IdentityModel.Tokens;
 
 
 namespace ATMWebApp.Controllers
@@ -94,7 +95,10 @@ namespace ATMWebApp.Controllers
 
             // Positive verification, store the user ID in session or authentication context
             // For example, using session:
-            HttpContext.Session.SetInt32("UserId", logged_user.Id);
+            if (HttpContext?.Session != null && logged_user != null)
+            {
+                HttpContext.Session.SetInt32("UserId", logged_user.ID);
+            }
 
             return Json(new { success = true });
         }
@@ -118,7 +122,7 @@ namespace ATMWebApp.Controllers
         public IActionResult CheckCashAvailability()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            var cashAvailability = _context.Users.FirstOrDefault(u => u.Id == userId)?.Balance ?? 0;
+            var cashAvailability = _context.Users.FirstOrDefault(u => u.ID == userId)?.Balance ?? 0;
 
             return View("CheckCashAvailability", cashAvailability);
         }
@@ -160,11 +164,12 @@ namespace ATMWebApp.Controllers
 
         public IActionResult ForgotPIN(int page = 1, int pageSize = 10)
         {
-            List<User> cardNumbers = _context.Users.Select(u => new User
+            List<User> cardNumbers = _context.Users.Select(u => new User()
             {
-                Id = u.Id,
+                ID = u.ID,
                 Name = u.Name,
-                CardNumber = u.CardNumber
+                CardNumber = u.CardNumber,
+                PIN = u.PIN
             }).ToList();
 
             int totalItems = cardNumbers.Count;
@@ -210,7 +215,7 @@ namespace ATMWebApp.Controllers
         public IActionResult ForgotPIN(int? userId, string pin)
         {
             var errors = new List<string>();
-            bool pinExists = _context.Users.Any(c => c.Id == userId && c.PIN == pin);
+            bool pinExists = _context.Users.Any(c => c.ID == userId && c.PIN == pin);
 
             if (string.IsNullOrEmpty(pin) && userId != null)
             {
@@ -239,66 +244,74 @@ namespace ATMWebApp.Controllers
                 return Json(new { isValid = errors.Count == 0, errors });
             }
 
-            var card = _context.Users.FirstOrDefault(c => c.Id == userId);
+            var card = _context.Users.FirstOrDefault(c => c.ID == userId);
 
-            if (pinExists)
+            if (card != null)
             {
-                if (card.PIN == pin)
+                if (pinExists)
                 {
-                    bool isValid = (card != null && card.PIN == pin);
-                    return Json(new { isValid });
+                    if (card.PIN == pin)
+                    {
+                        bool isValid = (card != null && card.PIN == pin);
+                        return Json(new { isValid });
+                    }
                 }
-            }
 
-            string cacheKey = $"PIN_{card.Id}";
+                string cacheKey = $"PIN_{card.ID}";
 
-            if (!_cache.TryGetValue(cacheKey, out string cachedPin))
-            {
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(30)); // Set expiration time
-
-                _cache.Set(cacheKey, pin, cacheEntryOptions);
-
-                if (card != null)
+                if (!_cache.TryGetValue(cacheKey, out string? cachedPin))
                 {
-                    card.PIN = pin;
-                    _context.Update(card);
-                    _context.SaveChanges();
-                    bool isSuccess = (card != null && card.PIN == pin);
-                    return Json(new { isSuccess });
+                    var cacheEntryOptions = new MemoryCacheEntryOptions()
+                        .SetAbsoluteExpiration(TimeSpan.FromMinutes(30)); // Set expiration time
+
+                    _cache.Set(cacheKey, pin, cacheEntryOptions);
+
+                    if (card != null)
+                    {
+                        card.PIN = pin;
+                        _context.Update(card);
+                        _context.SaveChanges();
+                        bool isSuccess = (card != null && card.PIN == pin);
+                        return Json(new { isSuccess });
+                    }
                 }
+                else
+                {
+                    if (card != null)
+                    {
+                        // Handle the scenario where PIN is already cached
+                        bool isInValid = (card.PIN == pin);
+                        return Json(new { isInValid });
+                    }     
+                }
+
+                //using (var transaction = _context.Database.BeginTransaction())
+                //{
+                //    try
+                //    {
+                //        _cache.Set(cacheKey, pin, cacheEntryOptions);
+
+                //        if (card != null && card.PIN != pin)
+                //        {
+                //            card.PIN = pin;
+                //            _context.Update(card);
+                //            _context.SaveChanges();
+
+                //            transaction.Commit();
+                //            return Json(new { success = true });
+                //        }
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        transaction.Rollback();
+                //        return Json(new { error = ex.Message });
+                //    }
+                //}
+
+                return Json(new { errors });
             }
-            else
-            {
-                // Handle the scenario where PIN is already cached
-                bool isInValid = (card != null || card.PIN == pin);
-                return Json(new { isInValid });
-            }
 
-            //using (var transaction = _context.Database.BeginTransaction())
-            //{
-            //    try
-            //    {
-            //        _cache.Set(cacheKey, pin, cacheEntryOptions);
-
-            //        if (card != null && card.PIN != pin)
-            //        {
-            //            card.PIN = pin;
-            //            _context.Update(card);
-            //            _context.SaveChanges();
-
-            //            transaction.Commit();
-            //            return Json(new { success = true });
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        transaction.Rollback();
-            //        return Json(new { error = ex.Message });
-            //    }
-            //}
-
-            return Json(new { errors });
+            throw new Exception($"You Forgot your PIN");
         }
 
         //[ActionName("ForgotPINWithoutUser")]

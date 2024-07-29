@@ -1,6 +1,6 @@
 
-$(document).ready(function () {
-    $('#searchButton').click(function () {
+$(function () {
+    $('#searchButton').on('click', function () {
         var searchValue = $('#searchInput').val().toLowerCase();
         $('.grid-view tbody tr').each(function () {
             var rowText = $(this).text().toLowerCase();
@@ -13,8 +13,8 @@ $(document).ready(function () {
     });
 });
 
-$(document).ready(function () {
-    $('.grid-row').click(function () {
+$(function () {
+    $('.grid-row').on('click', function () {
         if (!$(this).hasClass('selected')) {
             $('.grid-row').removeClass('selected');
             $(this).addClass('selected');
@@ -23,7 +23,7 @@ $(document).ready(function () {
         }
     });
 
-    $('#validateButton').click(function (e) {
+    $('#validateButton').on('click', function (e) {
         e.preventDefault();
 
         var selectedRow = $('.grid-row.selected');
@@ -103,8 +103,8 @@ $(document).ready(function () {
     });
 });
 
-$(document).ready(function () {
-    $('#validateButton').click(function (e) {
+$(function () {
+    $('#validateButton').on('click', function (e) {
         e.preventDefault();
 
         var enteredPin = $('#pinInput').val();
@@ -190,10 +190,10 @@ $(document).ready(function () {
     //});
 
 
-$(document).ready(function () {
+$(function () {
     var defaultOrder = $('tbody > tr').get(); // Store default row order
 
-    $('th').click(function () {
+    $('th').on('click', function () {
         var column = $(this).index();
         var rows = $('tbody > tr').get();
 
@@ -214,7 +214,7 @@ $(document).ready(function () {
     });
 
     // Reset to default sorting on double-click
-    $('th').dblclick(function () {
+    $('th').on('dblclick', function () {
         $('th').removeClass('asc desc'); // Remove sorting classes
         $('tbody').append(defaultOrder); // Revert to default order
     });

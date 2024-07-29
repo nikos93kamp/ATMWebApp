@@ -5,8 +5,8 @@
 /* site.js */
 
 
-$(document).ready(function () {
-    $('#loginForm').submit(function (e) {
+$(function () {
+    $('#loginForm').on('submit', function (e) {
             e.preventDefault(); // Prevent form submission
 
             //var formData = $(this).serialize();
@@ -173,8 +173,8 @@ $(document).ready(function () {
 //}
 
 
-$(document).ready(function () {
-    $('#withdraw-button').click(function (e) {
+$(function () {
+    $('#withdraw-button').on('click', function (e) {
         e.preventDefault();
         var amount = $('#amount').val();
         $.ajax({
